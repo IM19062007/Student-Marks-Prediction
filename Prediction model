@@ -1,0 +1,36 @@
+import pandas as pd
+import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import *
+import matplotlib.pyplot as plt
+
+hours = [7.2, 5.7, 7.6, 9.8, 5.4, 5.4, 9.9, 7.9, 4.8, 7.4]
+prev = [54, 69, 70, 63, 73, 81, 100, 78, 79, 74]
+att = [89, 91, 96, 96, 71, 76, 90, 90, 90, 100]
+marks = [37, 47, 60, 56, 52, 58, 84, 54, 61, 55]
+df=pd.DataFrame({'hours':hours,'prev':prev,'att':att,'marks':marks})
+
+X=df[['hours','prev','att']]
+Y=df['marks']
+x_train,x_test,y_train,y_test=train_test_split(X,Y,test_size=0.2,random_state=42)
+model = LinearRegression()
+model.fit(x_train,y_train)
+
+y_pred=model.predict(x_test)
+print(f'R2: {r2_score(y_test,y_pred):.2f}')
+print(f'Mean Absolute Error: {mean_absolute_error(y_test,y_pred):.2f}')
+print(f'Mean Squared Error: {mean_squared_error(y_test,y_pred):.2f}')
+print(f'Root Mean Squared Error: {np.sqrt(mean_squared_error(y_test,y_pred)):.2f}')
+print(f'Accuracy: {model.score(x_test,y_test):.2f}')
+
+new_student=[[5,100,62]]
+p=model.predict(np.array(new_student))
+print(f'Predicted marks:{p[0]:.2f}')
+
+plt.scatter(y_test,y_pred,color='blue',alpha=0.6)
+plt.plot([y_test.min(),y_test.max()],[y_test.min(),y_test.max()],'r--')
+plt.xlabel('Actual Marks')
+plt.ylabel('Predicted Marks')
+plt.title('Actual vs Predicted Marks')
+plt.show()
